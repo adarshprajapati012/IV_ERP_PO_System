@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/docs",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/vendors/(.*)",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/vendors",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/products/(.*)",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/products",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/purchase-orders/(.*)",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/purchase-orders",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/auth/(.*)",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/auth",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}

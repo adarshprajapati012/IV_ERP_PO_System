@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ERP Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-premium sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
+        <div class="bg-primary text-white rounded p-1" style="background: linear-gradient(135deg, var(--primary-color), #0ea5e9) !important;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        ERP Platform
+    </a>
+    <div class="ms-auto d-flex align-items-center gap-3">
+        <span class="text-muted d-none d-md-inline" style="font-size: 0.9rem;"><i class="bi bi-clock-history"></i> Last synced: Just now</span>
+        
+        <!-- User Profile Dropdown -->
+        <div class="profile-dropdown position-relative">
+            <button class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm" id="navProfileBtn" style="width: 42px; height: 42px; border: 2px solid var(--border-color); overflow: hidden;">
+                <i class="bi bi-person-circle fs-5 text-primary" id="navProfileIcon"></i>
+                <img id="navProfileImg" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 50%;" referrerpolicy="no-referrer">
+            </button>
+            <div class="profile-dropdown-menu modern-card p-3 position-absolute end-0 mt-2" style="width: 260px; z-index: 1000; display: none;">
+                <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-light">
+                    <div id="dropdownAvatarWrapper" class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                        <i class="bi bi-person-fill text-primary mt-1" id="dropdownProfileIcon"></i>
+                        <img id="dropdownProfileImg" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 50%;" referrerpolicy="no-referrer">
+                    </div>
+                    <div style="overflow: hidden;">
+                        <span class="d-block fw-bold text-truncate" id="userNameDisplay" style="font-size: 0.9rem;">User</span>
+                        <span class="d-block text-muted text-truncate" id="userEmailDisplay" style="font-size: 0.8rem;">admin@example.com</span>
+                    </div>
+                </div>
+                <button class="btn btn-premium-danger w-100 d-flex align-items-center justify-content-center gap-2" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 mb-5 pb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4 animate-fade-in-up">
+        <div>
+            <h2 class="mb-1 text-gradient">Purchase Orders</h2>
+            <p class="text-muted mb-0">Overview of all vendor orders and statuses</p>
+        </div>
+        <a href="create_po.html" class="btn btn-premium">
+            <i class="bi bi-plus-lg"></i> Create New PO
+        </a>
+    </div>
+
+    <!-- ===== FILTER PANEL ===== -->
+    <div class="filter-panel modern-card p-3 mb-3 animate-fade-in-up delay-100" id="filterPanel">
+        <div class="d-flex align-items-center justify-content-between mb-0">
+            <span class="filter-panel-title">
+                <i class="bi bi-funnel-fill me-2 text-primary"></i>Filters
+            </span>
+            <div class="d-flex align-items-center gap-2">
+                <span class="filter-results-badge" id="filterResultsBadge" style="display:none !important;"></span>
+                <button class="btn btn-sm btn-filter-clear" id="clearFiltersBtn" onclick="clearFilters()" style="display:none;">
+                    <i class="bi bi-x-circle me-1"></i>Clear All
+                </button>
+                <button class="btn btn-sm btn-filter-toggle" onclick="toggleFilterPanel()">
+                    <i class="bi bi-chevron-up" id="filterToggleIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="filterBody" class="mt-2">
+            <div class="row g-2">
+                <!-- Search -->
+                <div class="col-12 col-md-4">
+                    <label class="filter-label" for="filterSearch">
+                        <i class="bi bi-search me-1"></i>Search Reference
+                    </label>
+                    <div class="filter-input-wrapper">
+                        <input type="text" id="filterSearch" class="form-control filter-input"
+                            placeholder="e.g. PO-1001..." autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label" for="filterStatus">
+                        <i class="bi bi-tag me-1"></i>Status
+                    </label>
+                    <select id="filterStatus" class="form-select filter-input">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <!-- Vendor -->
+                <div class="col-6 col-md-3">
+                    <label class="filter-label" for="filterVendor">
+                        <i class="bi bi-building me-1"></i>Vendor
+                    </label>
+                    <select id="filterVendor" class="form-select filter-input">
+                        <option value="">All Vendors</option>
+                    </select>
+                </div>
+
+                <!-- Date From -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label" for="filterDateFrom">
+                        <i class="bi bi-calendar-event me-1"></i>Date From
+                    </label>
+                    <input type="date" id="filterDateFrom" class="form-control filter-input">
+                </div>
+
+                <!-- Date To -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label" for="filterDateTo">
+                        <i class="bi bi-calendar-check me-1"></i>Date To
+                    </label>
+                    <input type="date" id="filterDateTo" class="form-control filter-input">
+                </div>
+
+                <!-- Min Amount -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label" for="filterMinAmount">
+                        <i class="bi bi-currency-rupee me-1"></i>Min Amount
+                    </label>
+                    <input type="number" id="filterMinAmount" class="form-control filter-input"
+                        placeholder="0" min="0" step="0.01">
+                </div>
+
+                <!-- Max Amount -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label" for="filterMaxAmount">
+                        <i class="bi bi-currency-rupee me-1"></i>Max Amount
+                    </label>
+                    <input type="number" id="filterMaxAmount" class="form-control filter-input"
+                        placeholder="∞" min="0" step="0.01">
+                </div>
+
+                <!-- Apply button -->
+                <div class="col-12 col-md-2 d-flex align-items-end">
+                    <button class="btn btn-premium w-100" onclick="applyFilters()">
+                        <i class="bi bi-search me-1"></i>Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active filter chips -->
+            <div id="activeFilterChips" class="mt-3 d-flex flex-wrap gap-2" style="min-height: 0;"></div>
+        </div>
+    </div>
+
+    <!-- PO Table Card -->
+    <div class="modern-card p-0 overflow-hidden animate-fade-in-up delay-200">
+        <div class="table-responsive">
+            <table class="table table-premium mb-0" id="poTable">
+                <thead>
+                    <tr>
+                        <th width="15%">Reference No</th>
+                        <th width="20%">Vendor</th>
+                        <th width="20%">Total Amount</th>
+                        <th width="15%">Status</th>
+                        <th width="30%">Created Date</th>
+                    </tr>
+                </thead>
+                <tbody id="po-table-body">
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
+                            Loading purchase orders...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Table footer with count -->
+        <div class="table-footer px-4 py-3 d-flex align-items-center justify-content-between">
+            <span class="text-muted" id="tableResultsCount" style="font-size:0.85rem;"></span>
+            <span class="text-muted" style="font-size:0.8rem;">
+                <i class="bi bi-info-circle me-1"></i>Showing latest orders first
+            </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // A quick hack injected directly to format badges cleanly from the JS side
+    // Because the old JS just dumps text, we can override or we can just rely on the CSS
+    // Let's rely on dashboard.js but format styling.
+</script>
+<script src="js/dashboard.js?v=3"></script>
+
+<!-- We will gracefully inject classes via JS if needed, but standard table output looks good -->
+</body>
+</html>

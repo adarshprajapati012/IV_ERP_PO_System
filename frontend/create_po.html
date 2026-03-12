@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Purchase Order</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-premium sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
+        <div class="bg-primary text-white rounded p-1" style="background: linear-gradient(135deg, var(--primary-color), #0ea5e9) !important;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        ERP Platform
+    </a>
+    <div class="ms-auto d-flex align-items-center gap-3">
+        <a href="dashboard.html" class="btn btn-premium-outline btn-sm shadow-none"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        
+        <!-- User Profile Dropdown -->
+        <div class="profile-dropdown position-relative">
+            <button class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm" id="navProfileBtn" style="width: 42px; height: 42px; border: 2px solid var(--border-color); overflow: hidden;">
+                <i class="bi bi-person-circle fs-5 text-primary" id="navProfileIcon"></i>
+                <img id="navProfileImg" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 50%;" referrerpolicy="no-referrer">
+            </button>
+            <div class="profile-dropdown-menu modern-card p-3 position-absolute end-0 mt-2" style="width: 260px; z-index: 1000; display: none;">
+                <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-light">
+                    <div id="dropdownAvatarWrapper" class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                        <i class="bi bi-person-fill text-primary mt-1" id="dropdownProfileIcon"></i>
+                        <img id="dropdownProfileImg" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 50%;" referrerpolicy="no-referrer">
+                    </div>
+                    <div style="overflow: hidden;">
+                        <span class="d-block fw-bold text-truncate" id="userNameDisplay" style="font-size: 0.9rem;">User</span>
+                        <span class="d-block text-muted text-truncate" id="userEmailDisplay" style="font-size: 0.8rem;">admin@example.com</span>
+                    </div>
+                </div>
+                <button class="btn btn-premium-danger w-100 d-flex align-items-center justify-content-center gap-2" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 mb-5 pb-5">
+    <div class="mb-4 animate-fade-in-up">
+        <h2 class="mb-1 text-gradient">Create Purchase Order</h2>
+        <p class="text-muted">Draft a new PO and request AI descriptions</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-lg-8 animate-fade-in-up delay-100">
+            <div class="modern-card p-4 mb-4 hover-lift">
+                <h5 class="mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle text-primary"></i> Order Details
+                </h5>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted fw-bold" style="font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;">PO Reference No</label>
+                        <input type="text" class="form-control" id="poRefNo" placeholder="e.g. PO-1001" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="vendorSelect" class="form-label fw-semibold mb-0">Select Vendor</label>
+                            <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.85rem;" data-bs-toggle="modal" data-bs-target="#addVendorModal"><i class="bi bi-plus-circle"></i> Add New Vendor</a>
+                        </div>
+                        <select class="form-select" id="vendorSelect" required>
+                            <option value="">Loading vendors...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="modern-card p-4 mb-4 hover-lift">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 d-flex align-items-center gap-2"><i class="bi bi-cart4 text-primary"></i> Purchase Items</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-premium-outline btn-sm shadow-none" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            <i class="bi bi-box-seam"></i> Add Product
+                        </button>
+                        <button class="btn btn-premium-success btn-sm" onclick="addProductRow()">
+                            <i class="bi bi-plus-lg"></i> Add Row
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-premium" id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th width="35%">Product</th>
+                                <th width="20%">Unit Price</th>
+                                <th width="15%">Quantity</th>
+                                <th width="20%">Line Total</th>
+                                <th width="10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            <!-- Dynamic rows here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="emptyState" class="text-center py-4 bg-light rounded mt-3" style="border: 2px dashed var(--border-color); display: none;">
+                    <i class="bi bi-cart-x text-muted fs-2 mb-2"></i>
+                    <p class="text-muted mb-0">No items added to the order yet.</p>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end mb-4 d-lg-none">
+                <button type="button" class="btn btn-premium w-100 py-3 fs-5" onclick="submitPO()">
+                    <i class="bi bi-check-circle"></i> Submit Purchase Order
+                </button>
+            </div>
+        </div>
+        
+        <!-- Sidebar Column -->
+        <div class="col-lg-4 animate-fade-in-up delay-200">
+            
+            <!-- Summary Card -->
+            <div class="modern-card p-4 mb-4 bg-primary text-white hover-lift" style="background: linear-gradient(135deg, var(--primary-color) 0%, #312e81 100%) !important; border: none;">
+                <h5 class="mb-4 opacity-75 d-flex align-items-center gap-2"><i class="bi bi-receipt"></i> Order Summary</h5>
+                
+                <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-3" style="border-color: rgba(255,255,255,0.2) !important;">
+                    <span class="opacity-75">Subtotal</span>
+                    <span id="subtotalLabel" class="fw-bold">Rs 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-3" style="border-color: rgba(255,255,255,0.2) !important;">
+                    <span class="opacity-75">Tax (5%)</span>
+                    <span id="taxLabel" class="fw-bold">Rs 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <span class="fs-5 opacity-75">Total Amount</span>
+                    <span class="fs-3 fw-bold" id="totalLabel">Rs 0.00</span>
+                </div>
+                
+                <button type="button" class="btn btn-light w-100 mt-4 fw-bold text-primary py-3 px-4 d-none d-lg-block shadow-sm" onclick="submitPO()" style="border-radius: var(--radius-md);">
+                    Submit Purchase Order
+                </button>
+            </div>
+
+            <!-- AI Marketing Features -->
+            <div class="modern-card p-4 position-relative overflow-hidden hover-lift">
+                <!-- Decorative background blob -->
+                <div class="blob-animate" style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%); z-index: 0; border-radius: 50%;"></div>
+                
+                <div class="position-relative z-1">
+                    <h6 class="mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-magic text-info"></i> AI Marketing Assistant
+                    </h6>
+                    <p class="text-muted" style="font-size: 0.85rem;">Generate professional descriptions for your products using OpenRouter.</p>
+                    
+                    <div class="form-group mb-3">
+                        <input type="text" id="aiProductName" class="form-control" placeholder="e.g. Wireless Mouse">
+                    </div>
+                    <button class="btn btn-premium-outline w-100 mb-3" onclick="generateDescription()">
+                        <i class="bi bi-stars"></i> Generate
+                    </button>
+                    
+                    <label class="form-label text-muted fw-bold" style="font-size: 0.8rem; text-transform: uppercase;">Result</label>
+                    <textarea id="aiDescription" class="form-control" rows="3" placeholder="Generated description will appear here..." readonly style="background-color: var(--bg-page); font-size: 0.9rem; line-height: 1.5; border-color: var(--border-color);"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
+<script src="js/create_po.js?v=7"></script>
+
+<script>
+    // A tiny script to toggle empty state styling for visual polish
+    setInterval(() => {
+        const tbody = document.getElementById('itemsBody');
+        const emptyState = document.getElementById('emptyState');
+        const itemsTable = document.getElementById('itemsTable');
+        if (tbody && emptyState) {
+            if (tbody.children.length === 0) {
+                emptyState.style.display = 'block';
+                itemsTable.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                itemsTable.style.display = 'table';
+            }
+        }
+    }, 500);
+</script>
+
+</body>
+
+<!-- Add Vendor Modal -->
+<div class="modal fade" id="addVendorModal" tabindex="-1" aria-labelledby="addVendorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-card border-0">
+      <div class="modal-header border-bottom border-secondary" style="border-color: var(--border-color) !important;">
+        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="addVendorModalLabel"><i class="bi bi-building-add"></i> Add New Vendor</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="addVendorForm">
+          <div class="mb-3">
+            <label for="vendorNameInput" class="form-label fw-semibold">Vendor Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="vendorNameInput" required placeholder="e.g. Global Tech Supplies">
+          </div>
+          <div class="mb-3">
+            <label for="vendorContactInput" class="form-label fw-semibold">Contact Email/Phone</label>
+            <input type="text" class="form-control" id="vendorContactInput" placeholder="e.g. vendor@example.com">
+          </div>
+          <div class="mb-3">
+            <label for="vendorRatingInput" class="form-label fw-semibold">Rating (0.0 to 5.0)</label>
+            <input type="number" class="form-control" id="vendorRatingInput" step="0.1" min="0" max="5" placeholder="e.g. 4.5">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-premium" onclick="submitNewVendor()">Save Vendor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-card border-0">
+      <div class="modal-header border-bottom border-secondary" style="border-color: var(--border-color) !important;">
+        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="addProductModalLabel"><i class="bi bi-box-seam"></i> Add New Product</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="addProductForm">
+          <div class="mb-3">
+            <label for="productNameInput" class="form-label fw-semibold">Product Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="productNameInput" required placeholder="e.g. Wireless Mouse">
+          </div>
+          <div class="mb-3">
+            <label for="productSkuInput" class="form-label fw-semibold">SKU Code <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="productSkuInput" required placeholder="e.g. WM-1001">
+          </div>
+          <div class="row">
+              <div class="col-6 mb-3">
+                <label for="productPriceInput" class="form-label fw-semibold">Unit Price <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light">Rs</span>
+                    <input type="number" class="form-control" id="productPriceInput" required step="0.01" min="0" placeholder="0.00">
+                </div>
+              </div>
+              <div class="col-6 mb-3">
+                <label for="productStockInput" class="form-label fw-semibold">Stock Level</label>
+                <input type="number" class="form-control" id="productStockInput" value="0" min="0">
+              </div>
+          </div>
+          <div class="mb-3">
+            <label for="productDescInput" class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" id="productDescInput" rows="2" placeholder="Optional description..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-premium" onclick="submitNewProduct()">Save Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</html>
